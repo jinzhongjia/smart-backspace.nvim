@@ -5,18 +5,44 @@ local config = require("smart-backspace.config")
 function M.setup()
    vim.api.nvim_create_user_command(
       "SmartBackspaceToggle",
-      function()
-         vim.g.smart_backspace_toggled = not vim.g.smart_backspace_toggled
+      function(opts)
+         local arguements = opts.fargs
 
-         if not config.get_config().silent then
-            if vim.g.smart_backspace_toggled == true then
-               vim.notify("Smart Backspace Enabled!")
-            elseif vim.g.smart_backspace_toggled == false then
-               vim.notify("Smart Backspace Disabled!")
+         if (#arguements == 0) then
+            vim.g.smart_backspace_toggled = not vim.g.smart_backspace_toggled
+
+            if not config.get_config().silent then
+               if vim.g.smart_backspace_toggled == true then
+                  vim.notify("Smart Backspace Enabled!")
+               elseif vim.g.smart_backspace_toggled == false then
+                  vim.notify("Smart Backspace Disabled!")
+               end
             end
+
+         elseif (#arguements == 1) then
+            if (arguements[1] == "true" or arguements[1] == "on") then
+               vim.g.smart_backspace_toggled = true
+               if not config.get_config().silent then
+                  vim.notify("Smart Backspace Enabled!")
+               end
+
+            elseif (arguements[1] == "false" or arguements[1] == "off") then
+               vim.g.smart_backspace_toggled = false
+               if not config.get_config().silent then
+                  vim.notify("Smart Backspace Disabled!")
+               end
+            else
+               vim.notify("Not a valid state. Try :SmartBackspaceToggle on/off", 4)
+            end
+
+         else
+            vim.notify("Please only pass in a maximum of 1 arguement. Try :SmartBackspaceToggle on/off", 4)
          end
       end,
-      {}
+      {
+         desc = "Toggles smart-backspace. Optionally pass in true/false as an arguement to force a specific state",
+         nargs = "*"
+      }
    )
 
    local disabled_filetypes = config.get_config().disabled_filetypes
