@@ -15,7 +15,7 @@ local function delete_char_before_cursor_utf8(line, col)
    end
 
    -- Get byte index of the previous character
-   local prev_char_byte_idx = vim.str_byteindex(line, char_idx - 1)
+   local prev_char_byte_idx = vim.str_byteindex(line, "utf-16", char_idx - 1)
 
    -- Delete from prev_char_byte_idx to col (exclusive)
    -- In Lua string.sub: keep [1, prev_char_byte_idx] and [col+1, end]
@@ -51,6 +51,23 @@ local function contains_pair(cursor_pos, current_line)
          return true
       end
    end
+   return false
+end
+
+local function is_opening_pair(char)
+   local code_pairs = {
+      "(",
+      "[",
+      "{",
+      "<",
+   }
+
+   for _, opening_pair in ipairs(code_pairs) do
+      if (char == opening_pair) then
+         return true
+      end
+   end
+
    return false
 end
 
@@ -199,6 +216,7 @@ local function remove_whitespace(cursor_pos, current_line)
    local after_cursor = current_line:sub(col + 1)
    local prev_line = vim.api.nvim_buf_get_lines(0, row - 2, row - 1, false)[1]
    local prev_non_whitespace_line = ""
+
    local prev_line_index = 1
    local at_start_of_file = false
 
@@ -206,7 +224,7 @@ local function remove_whitespace(cursor_pos, current_line)
    while true do
       prev_non_whitespace_line = vim.api.nvim_buf_get_lines(0, row - prev_line_index - 1, row - prev_line_index, false)[1]
 
-      -- if you hit the start of the file, delete the whitespace behind the cursor
+      -- if you hit the start of the file, set a flag to delete the whitespace behind the cursor
       if (prev_non_whitespace_line == nil) then
          at_start_of_file = true
          break
@@ -235,6 +253,29 @@ local function remove_whitespace(cursor_pos, current_line)
          -- remove the line
          vim.api.nvim_buf_set_lines(0, row - 2, row, false, {after_cursor})
          vim.api.nvim_win_set_cursor(0, {row - 1, 0})
+      end
+
+   elseif is_opening_pair(prev_non_whitespace_line:match("(%S)%s*$")) or (current_line:match("%S") == ".") then
+      -- sees if above line ends in a opeing pair of brackets OR current line starts with a "."
+
+      local prev_line_whitespace_level = count_whitepsace(prev_non_whitespace_line)
+      local current_line_whitespace_level = count_whitepsace(current_line)
+      local tabs_to_spaces_ratio = vim.api.nvim_get_option_value("tabstop", { buf = 0 })
+      local correct_indentation_level = prev_line_whitespace_level + tabs_to_spaces_ratio
+
+      if (current_line_whitespace_level > correct_indentation_level) then
+         -- if over-indented, set to correct indentation
+         local prev_line_whitespace = prev_non_whitespace_line:match("^(%s+)") or ""
+         -- WARN: only ever adds spaces. Maybe allow to change to tabs in config?
+         local correct_indentation = prev_line_whitespace .. string.rep(" ", tabs_to_spaces_ratio)
+         vim.api.nvim_buf_set_lines(0, row - 1, row, false, {correct_indentation .. after_cursor})
+         vim.api.nvim_win_set_cursor(0, {row, #correct_indentation})
+
+      else
+         -- otherwise, join the current line with the previous line
+         local new_line = prev_line .. after_cursor
+         vim.api.nvim_buf_set_lines(0, row - 2, row, false, {new_line}) -- replace both lines w new_line
+         vim.api.nvim_win_set_cursor(0, {row - 1, #prev_line}) -- set cursor at end of previous line content
       end
 
    elseif (row > 1) and (count_whitepsace(current_line) > count_whitepsace(prev_non_whitespace_line)) and not contains_only_whitespace(current_line) then
