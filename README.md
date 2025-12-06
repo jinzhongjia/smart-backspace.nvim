@@ -83,6 +83,14 @@ If you want to set a keybind to toggle smart-backspace, you can implement the fo
 vim.keymap.set("n", "<leader>bs", "<cmd>SmartBackspaceToggle<CR>", { desc = "Toggle Smart Backspace" })
 ```
 
+## 🥇 Load times
+
+Smart-Backspace prides itself in its almost instant load times.
+
+Compare load times against some other plugins!
+
+<img width="3839" height="2072" alt="image" src="https://github.com/user-attachments/assets/1be85339-88c0-4305-b0a0-fd54f295b7ac" />
+
 ## 👨‍💻 Planned Changes/Additions
 
 - [x] A `:SmartBackspaceToggle` command
@@ -92,10 +100,3 @@ vim.keymap.set("n", "<leader>bs", "<cmd>SmartBackspaceToggle<CR>", { desc = "Tog
 - [x] Using `<C-BS>` to use as a regular backspace
 - [x] User configuration for more flexibility (feel free to recommend me more configuration changes!)
 
-## 🥇 Load times
-
-Smart-Backspace prides itself in its almost instant load times.
-
-Compare load times against some other plugins!
-
-<img width="3839" height="2072" alt="image" src="https://github.com/user-attachments/assets/1be85339-88c0-4305-b0a0-fd54f295b7ac" />
