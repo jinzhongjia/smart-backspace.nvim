@@ -32,11 +32,11 @@ function M.setup()
                   vim.notify("Smart Backspace Disabled!")
                end
             else
-               vim.notify("Not a valid state. Try :SmartBackspaceToggle on/off", 4)
+               vim.notify("Not a valid state. Try :SmartBackspaceToggle on/off", vim.log.levels.ERROR)
             end
 
          else
-            vim.notify("Please only pass in a maximum of 1 arguement. Try :SmartBackspaceToggle on/off", 4)
+            vim.notify("Please only pass in a maximum of 1 arguement. Try :SmartBackspaceToggle on/off", vim.log.levels.ERROR)
          end
       end,
       {

@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/395f18ee-1346-4ac2-8b5c-79597cffe995
 
 ### 📋 Requirements
 
-- Neovim 0.8.0 or higher
+- Neovim `0.8.0+`
 
 > [!WARNING]
 > If using with [nvim-autopairs](https://github.com/windwp/nvim-autopairs), in `opts`, ensure that `map_bs = false`.
@@ -94,9 +94,9 @@ Compare load times against some other plugins!
 ## 👨‍💻 Planned Changes/Additions
 
 - [x] A `:SmartBackspaceToggle` command
-- [ ] True compatibility with [nvim-autopairs](https://github.com/windwp/nvim-autopairs), or act as an alternative
+- [x] True compatibility with [nvim-autopairs](https://github.com/windwp/nvim-autopairs), or act as an alternative
   - [x] Delete pairs of brackets like [nvim-autopairs](https://github.com/windwp/nvim-autopairs)
-  - [ ] Remove the need to set `map_bs = false`
+  - [x] Send warning when smart-backspace has been overriden by another file/plugin
 - [x] Using `<C-BS>` to use as a regular backspace
 - [x] User configuration for more flexibility (feel free to recommend me more configuration changes!)
 
