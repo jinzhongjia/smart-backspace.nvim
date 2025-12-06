@@ -75,6 +75,8 @@ Using [lazy.nvim](https://lazy.folke.io):
 
 Using the `:SmartBackspaceToggle` command, smart-backspace can be toggled on/off.
 
+You can force a certain state with either `:SmartBackspaceToggle on` or `:SmartBackspaceToggle off`
+
 If you want to set a keybind to toggle smart-backspace, you can implement the following into your neovim config:
 
 ```lua

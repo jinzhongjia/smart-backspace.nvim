@@ -41,7 +41,10 @@ function M.setup()
       end,
       {
          desc = "Toggles smart-backspace. Optionally pass in true/false as an arguement to force a specific state",
-         nargs = "*"
+         nargs = "*",
+         complete = function()
+            return { "on", "off" }
+         end
       }
    )
 
