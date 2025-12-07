@@ -260,14 +260,14 @@ local function remove_whitespace(cursor_pos, current_line)
 
       local prev_line_whitespace_level = count_whitepsace(prev_non_whitespace_line)
       local current_line_whitespace_level = count_whitepsace(current_line)
-      local tabs_to_spaces_ratio = vim.api.nvim_get_option_value("tabstop", { buf = 0 })
-      local correct_indentation_level = prev_line_whitespace_level + tabs_to_spaces_ratio
+      local single_indentation_level = vim.bo.shiftwidth
+      local correct_indentation_level = prev_line_whitespace_level + single_indentation_level
 
       if (current_line_whitespace_level > correct_indentation_level) then
          -- if over-indented, set to correct indentation
          local prev_line_whitespace = prev_non_whitespace_line:match("^(%s+)") or ""
          -- WARN: only ever adds spaces. Maybe allow to change to tabs in config?
-         local correct_indentation = prev_line_whitespace .. string.rep(" ", tabs_to_spaces_ratio)
+         local correct_indentation = prev_line_whitespace .. string.rep(" ", single_indentation_level)
          vim.api.nvim_buf_set_lines(0, row - 1, row, false, {correct_indentation .. after_cursor})
          vim.api.nvim_win_set_cursor(0, {row, #correct_indentation})
 
