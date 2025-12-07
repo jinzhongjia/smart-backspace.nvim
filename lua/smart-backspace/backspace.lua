@@ -307,7 +307,7 @@ function M.smart_backspace()
    elseif contains_only_whitespace(behind_cursor) then
       -- if the cursor is in the middle of the whitespace indentation,
       -- use the logic of the cursor being at the first non-whitespace character
-      cursor_pos = { cursor_pos[1], (current_line:find("%S") - 1) } -- replaces the column with first non-whitespace char
+      cursor_pos = { cursor_pos[1], ((current_line:find("%S") or #current_line + 1) - 1) } -- replaces the column with first non-whitespace char
       remove_whitespace(cursor_pos, current_line)
 
    elseif contains_pair(cursor_pos, current_line) then
