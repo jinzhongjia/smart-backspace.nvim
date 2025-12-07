@@ -271,6 +271,9 @@ local function remove_whitespace(cursor_pos, current_line)
          vim.api.nvim_buf_set_lines(0, row - 1, row, false, {correct_indentation .. after_cursor})
          vim.api.nvim_win_set_cursor(0, {row, #correct_indentation})
 
+      elseif contains_only_whitespace(prev_line) then
+         vim.api.nvim_buf_set_lines(0, row - 2, row - 1, false, {})
+
       else
          -- otherwise, join the current line with the previous line
          local new_line = prev_line .. after_cursor
@@ -278,25 +281,21 @@ local function remove_whitespace(cursor_pos, current_line)
          vim.api.nvim_win_set_cursor(0, {row - 1, #prev_line}) -- set cursor at end of previous line content
       end
 
-   elseif (row > 1) and (count_whitepsace(current_line) > count_whitepsace(prev_non_whitespace_line)) and not contains_only_whitespace(current_line) then
-      -- unindent to the above line's current indentation
+   elseif (count_whitepsace(current_line) > count_whitepsace(prev_non_whitespace_line)) and not contains_only_whitespace(current_line) then
+      -- unindent to the above (non-whitespace) line's current indentation
       local prev_line_whitespace = prev_non_whitespace_line:match("^(%s+)") or ""
       vim.api.nvim_buf_set_lines(0, row - 1, row, false, {prev_line_whitespace .. after_cursor})
       vim.api.nvim_win_set_cursor(0, {row, #prev_line_whitespace})
 
-   elseif (row > 1) and contains_only_whitespace(prev_line) then
+   elseif contains_only_whitespace(prev_line) then
       -- remove line above if empty
       vim.api.nvim_buf_set_lines(0, row - 2, row - 1, false, {})
 
-   elseif (row > 1) then
+   else
       -- join the current line with the previous line
       local new_line = prev_line .. after_cursor
       vim.api.nvim_buf_set_lines(0, row - 2, row, false, {new_line}) -- replace both lines w new_line
       vim.api.nvim_win_set_cursor(0, {row - 1, #prev_line}) -- set cursor at end of previous line content
-
-   else
-      -- should never be called, just a failsafe
-      regular_backspace(cursor_pos, current_line)
    end
 end
 
