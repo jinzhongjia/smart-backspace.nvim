@@ -102,12 +102,7 @@ local function remove_charater(cursor_pos, current_line)
 end
 
 local function contains_only_whitespace(str)
-   for char in str:gmatch(".") do
-      if char ~= " " and char ~= "\t" then
-         return false
-      end
-   end
-   return true
+   return not str:find("%S")
 end
 
 local function count_whitepsace(str)
