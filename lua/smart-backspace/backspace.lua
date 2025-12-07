@@ -273,6 +273,7 @@ local function remove_whitespace(cursor_pos, current_line)
 
       elseif contains_only_whitespace(prev_line) then
          vim.api.nvim_buf_set_lines(0, row - 2, row - 1, false, {})
+         vim.api.nvim_win_set_cursor(0, {row - 1, col})
 
       else
          -- otherwise, join the current line with the previous line
@@ -290,6 +291,7 @@ local function remove_whitespace(cursor_pos, current_line)
    elseif contains_only_whitespace(prev_line) then
       -- remove line above if empty
       vim.api.nvim_buf_set_lines(0, row - 2, row - 1, false, {})
+      vim.api.nvim_win_set_cursor(0, {row - 1, col})
 
    else
       -- join the current line with the previous line
@@ -308,6 +310,9 @@ function M.smart_backspace()
       regular_backspace(cursor_pos, current_line)
 
    elseif contains_only_whitespace(behind_cursor) then
+      -- if the cursor is in the middle of the whitespace indentation,
+      -- use the logic of the cursor being at the first non-whitespace character
+      cursor_pos = { cursor_pos[1], (current_line:find("%S") - 1) } -- replaces the column with first non-whitespace char
       remove_whitespace(cursor_pos, current_line)
 
    elseif contains_pair(cursor_pos, current_line) then
